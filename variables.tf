@@ -35,3 +35,8 @@ variable "log_progress" {
   default     = false
   description = "choose whether the runbook is to log progress"
 }
+
+variable "runbook_parameters" {
+  type        = map(any)
+  description = "parameters to pass to runbook"
+}

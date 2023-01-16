@@ -9,6 +9,8 @@ module "app_secret_expiry" {
   automation_account_name = "sds-aa"
   resource_group_name     = "sds-rg
   location                = "uksouth"
+  tags                    = var.common_tags
+
   credentials             = [
                                 {
                                     name        = "azure-ad-credential"
@@ -18,7 +20,16 @@ module "app_secret_expiry" {
                                 }
                             ]
 
-  tags                    = var.common_tags
+  runbook_parameters      = {
+    applicationids      = "@('000000','111111')"
+    azuretenant         = "00000-00000"
+    azurecredential     = "azure-cred"
+    dynatracetenant     = "xyz1234"
+    dynatraceCredential = "dynatrace-cred"
+    entityype           = "AZURE_TENANT"
+    entityname          = "tenant-name
+    project             = "VH"
+  } 
 }
 
 ```
@@ -58,6 +69,7 @@ No modules.
 | <a name="input_log_verbose"></a> [log\_verbose](#input\_log\_verbose) | choose whether the runbook is to log verbose | `bool` | `false` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | name of resource group | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags | `map(string)` | n/a | yes |
+| <a name="runbook_parameters"></a> [runbook_parameters](#input\runbook_parameters) | parameters to pass to runbook | `map(any)` | n/a | yes |
 
 ## Outputs
 

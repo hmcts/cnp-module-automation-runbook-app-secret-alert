@@ -6,7 +6,7 @@ resource "azurerm_automation_runbook" "get_appregistrationexpiry" {
   log_verbose             = var.log_verbose
   log_progress            = var.log_progress
   description             = "This runbook checks for any App Registration Client Secrets due to expire, then creates a Dynatrace alert."
-  runbook_type            = "PowerShell7"
+  runbook_type            = "PowerShell"
   content                 = file("${path.module}/Get-AppRegistrationExpiry.ps1")
   tags                    = var.tags
 }
