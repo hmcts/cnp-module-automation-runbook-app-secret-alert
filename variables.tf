@@ -37,6 +37,15 @@ variable "log_progress" {
 }
 
 variable "runbook_parameters" {
-  type        = map(any)
+  type = object({
+    applicationids      = string # created as a string rather than list(string) due to a bug.
+    azuretenant         = string
+    azurecredential     = string
+    dynatracetenant     = string
+    dynatracecredential = string
+    entitytype          = string
+    entityname          = string
+    project             = string
+  })
   description = "parameters to pass to runbook"
 }

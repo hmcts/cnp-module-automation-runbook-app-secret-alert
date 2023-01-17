@@ -4,7 +4,7 @@ resource "azurerm_automation_schedule" "schedule" {
   automation_account_name = var.automation_account_name
   frequency               = "Week"
   interval                = 1
-  week_days               = ["Sunday"] 
+  week_days               = ["Sunday"]
   description             = "Sunday Weekly Schedule."
 }
 

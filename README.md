@@ -1,4 +1,4 @@
-## Dynatrace Module
+## App Registration Alert Module
 
 This Module will create a PowerShell runbook which checks for App Registration Client Secrets that are expiring within 21 days.
 
@@ -21,11 +21,11 @@ module "app_secret_expiry" {
                             ]
 
   runbook_parameters      = {
-    applicationids      = "@('000000','111111')"
+    applicationids      = "00000-00000, 11111-11111" # comma seperated application ids, this has to be passed as a type: string rather than type: list(string) due to a bug when creating this runbook
     azuretenant         = "00000-00000"
-    azurecredential     = "azure-cred"
-    dynatracetenant     = "xyz1234"
-    dynatraceCredential = "dynatrace-cred"
+    azurecredential     = "azure-credential"
+    dynatracetenant     = "abc123"
+    dynatraceCredential = "dynatrace-credential"
     entityype           = "AZURE_TENANT"
     entityname          = "tenant-name
     project             = "VH"
@@ -73,6 +73,8 @@ No modules.
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | name of resource group | `string` | n/a | yes |
 | <a name="input_runbook_parameters"></a> [runbook\_parameters](#input\_runbook\_parameters) | parameters to pass to runbook | `map(any)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags | `map(string)` | n/a | yes |
+| <a name="input_runbook_parameters"></a> [runbook\_parameters](#input\_runbook\_parameters) | parameters to pass to runbook | <pre>object({<br>    applicationids      = string # created as a string rather than list(string) due to a bug.<br>    azuretenant         = string<br>    azurecredential     = string<br>    dynatracetenant     = string<br>    dynatracecredential = string<br>    entitytype          = string<br>    entityname          = string<br>    project    
+         = string<br>  })</pre> | n/a | yes |
 
 ## Outputs
 

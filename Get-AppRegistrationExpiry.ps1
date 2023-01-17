@@ -22,7 +22,7 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string[]]
+    [string]
     $applicationIds,
 
     [Parameter()]
@@ -73,6 +73,8 @@ Connect-AzAccount -ServicePrincipal -TenantId $azureTenant -Credential $azCreden
 
 ###############################################
 # Check App Registration Expirys. #############
+$applicationIds = $applicationIds.Replace(' ', '') -Split ','
+
 foreach ($id in $applicationIds) {
   $appName = (Get-AzADApplication -Filter "AppId eq '$id'").displayName
   Write-Output "Checking Secret Expiration for App Registration : $appName"
