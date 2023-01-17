@@ -54,8 +54,8 @@ variable "log_progress" {
 
 variable "runbook_parameters" {
   type = object({
-    applicationids      = string # created as a string rather than list(string) due to a bug.
-    azuretenant         = string
+    applicationids      = string # app ids to check for expiring secrets created as a string rather than list(string) due to a bug.
+    azuretenant         = string 
     azurecredential     = string
     dynatracetenant     = string
     dynatracecredential = string
@@ -63,5 +63,16 @@ variable "runbook_parameters" {
     entityname          = string
     project             = string
   })
-  description = "parameters to pass to runbook"
+  description = <<EOT
+    parameters to pass to runbook.
+    ------------------------------------------------------------ 
+    applicationids      = app ids to check for expiring secrets
+    azuretenant         = azure tenant id
+    azurecrdential      = automation account credential which has access to azure ad
+    dynatracetenant     = dynatrace tenant name
+    dynatracecredential = automation account credential which has access to dynatrace api
+    entitytype          = dynatrace entity type
+    entityname          = dynatrace entity name 
+    project             = name of project
+  EOT
 }
