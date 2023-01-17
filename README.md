@@ -4,7 +4,7 @@ This Module will create a PowerShell runbook which checks for App Registration C
 
 ```terraform
 module "app_registration_alert" {
-  source = "../"
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-app-secret-alert"
 
   automation_account_name = "automation-account"
   resource_group_name     = "resource-group"
