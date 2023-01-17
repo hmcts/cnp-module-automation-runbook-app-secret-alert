@@ -73,7 +73,7 @@ No modules.
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | name of resource group | `string` | n/a | yes |
 | <a name="input_runbook_parameters"></a> [runbook\_parameters](#input\_runbook\_parameters) | parameters to pass to runbook | `map(any)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags | `map(string)` | n/a | yes |
-| <a name="input_runbook_parameters"></a> [runbook\_parameters](#input\_runbook\_parameters) | parameters to pass to runbook | <pre>object({<br>    applicationids      = string # created as a string rather than list(string) due to a bug.<br>    azuretenant         = string<br>    azurecredential     = string<br>    dynatracetenant     = string<br>    dynatracecredential = string<br>    entitytype          = string<br>    entityname          = string<br>    project    = string<br>  })</pre> | n/a | yes |
+| <a name="input_runbook_parameters"></a> [runbook\_parameters](#input\_runbook\_parameters) | parameters to pass to runbook | <pre>object({<br>    applicationids      = string # created as a string rather than list(string) due to a bug.<br>    azuretenant         = string<br>    azurecredential     = string<br>    dynatracetenant     = string<br>    dynatracecredential = string<br>    entitytype          = string<br>    entityname          = string<br>    project          = string<br>  })</pre> | n/a | yes |
 
 ## Outputs
 
