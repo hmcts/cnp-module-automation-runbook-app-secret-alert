@@ -21,7 +21,7 @@ module "app_secret_expiry" {
                             ]
 
   runbook_parameters      = {
-    applicationids      = "00000-00000, 11111-11111" # comma seperated application ids, this has to be passed as a type: string rather than type: list(string) due to a bug when creating this runbook
+    applicationids      = "00000-00000, 11111-11111" # comma separated application ids, this has to be passed as a type: string rather than type: list(string) due to a bug when creating this runbook
     azuretenant         = "00000-00000"
     azurecredential     = "azure-credential"
     dynatracetenant     = "abc123"
