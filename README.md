@@ -3,33 +3,42 @@
 This Module will create a PowerShell runbook which checks for App Registration Client Secrets that are expiring within 21 days.
 
 ```terraform
-module "app_secret_expiry" {
-  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-app-secret-alert"
+module "app_registration_alert" {
+  source = "../"
 
-  automation_account_name = "sds-aa"
-  resource_group_name     = "sds-rg
-  location                = "uksouth"
-  tags                    = var.common_tags
+  automation_account_name = "automation-account"
+  resource_group_name     = "resource-group"
+  location                = "uk south"
 
-  credentials             = [
-                                {
-                                    name        = "azure-ad-credential"
-                                    description = "a credential for azure ad access"
-                                    username    = "00000-000000-00000" # app registration id which has access to query azure ad.
-                                    password    = data.azurerm_key_vault_secret.password.value # app registration client secret.
-                                }
-                            ]
+  azure_credentials = {
+    description = "azure spn with azure ad access"
+    name        = "service-principal"
+    password    = azuread_application_password.password.value
+    username    = azuread_appplication.app.application_id
+  }
 
-  runbook_parameters      = {
-    applicationids      = "00000-00000, 11111-11111" # comma separated application ids, this has to be passed as a type: string rather than type: list(string) due to a bug when creating this runbook
-    azuretenant         = "00000-00000"
-    azurecredential     = "azure-credential"
-    dynatracetenant     = "abc123"
-    dynatraceCredential = "dynatrace-credential"
-    entityype           = "AZURE_TENANT"
-    entityname          = "tenant-name
+  dynatrace_credentials = {
+    description = "dynatrace api token"
+    name        = "dynatrace-token"
+    password    = azurerm_key_vault_secret.dynatrace_token.value
+    username    = "dynatrace"
+  }
+
+  runbook_parameters = {
+    applicationids      = "000000, 111111"
+    azuretenant         = "000000-0000000-000000"
+    azurecredential     = "service-prinicpal"
+    dynatracetenant     = "xyz1234"
+    dynatracecredential = "dynatrace-token"
+    entitytype          = "AZURE_TENANT"
+    entityname          = "HMCTS-Tenant-Name"
     project             = "VH"
-  } 
+  }
+
+  tags = {
+    "environment" = "dev"
+    "repository"  = "cnp-module-automation-runbook-app-secret-alert"
+  }
 }
 
 ```

@@ -18,10 +18,26 @@ variable "tags" {
   description = "tags"
 }
 
-variable "automation_credentials" {
-  type        = list(map(string))
-  description = "service principal credentials which have access to query azure ad"
-  default     = []
+variable "azure_credentials" {
+  type = object({
+    name        = optional(string)
+    description = optional(string)
+    username    = optional(string)
+    password    = optional(string)
+  })
+  description = "service principal credentials which have access to query azure ad, these will be added to the automation account as credentials"
+  default     = null
+}
+
+variable "dynatrace_credentials" {
+  type = object({
+    name        = optional(string)
+    description = optional(string)
+    username    = optional(string)
+    password    = optional(string)
+  })
+  description = "dynatrace api token credentials with access to post data to dynatrace api, these will be added to the automation account as credentials"
+  default     = null
 }
 
 variable "log_verbose" {
