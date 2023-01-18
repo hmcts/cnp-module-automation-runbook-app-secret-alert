@@ -64,37 +64,51 @@ $dateTime = (Get-Date)
 
 ###############################################
 # Authenticate with Azure. ####################
-$azureCredentials = Get-AutomationPSCredential -Name $azureCredential
+$azureCredentials = Get-AutomationPSCredential -Name $azureCredential -ErrorAction Stop
 $azureUser        = $azureCredentials.Username 
-$azurePass        = $azureCredentials.GetNetworkCredential().Password | ConvertTo-SecureString -AsPlainText
+$azurePass        = $azureCredentials.GetNetworkCredential().Password | ConvertTo-SecureString -AsPlainText -Force
 $azCredential     = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $azureUser, $azurePass
 
-Connect-AzAccount -ServicePrincipal -TenantId $azureTenant -Credential $azCredential | Out-Null
+Connect-AzAccount -ServicePrincipal -TenantId $azureTenant -Credential $azCredential -ErrorAction Stop
 
 ###############################################
 # Check App Registration Expirys. #############
-$applicationIds = $applicationIds.Replace(' ', '') -Split ','
+$ids = $applicationIds.Replace(' ', '') -Split ','
 
-foreach ($id in $applicationIds) {
+foreach ($id in $ids) {
+
+  # Check App Registration Exists.
   $appName = (Get-AzADApplication -Filter "AppId eq '$id'").displayName
-  Write-Output "Checking Secret Expiration for App Registration : $appName"
 
-  # Get App Registration Client Secrets.
+  if ($null -eq $appName) {
+    Write-Output "`n`nApp Registration $id not found in Azure Tenant $azureTenant"
+    Continue
+  }
+  
+  # Check Client Secrets.
+  Write-Output "`n`nChecking Secret Expiration for App Registration : $appName"
+
   $credentials      = (Get-AzADAppCredential -ApplicationId $id)
   $credentialsCount = $credentials.Count
-  Write-Output "`tFound $credentialsCount Client Secrets."
 
-  ########################################
-  # Check Credentials. ###################
-  $counter = 0
+  if ($credentialsCount -eq 0) {
+    Write-Output "`tFound $credentialsCount Client Secrets, Continuing..."
+    Continue
+  }
+  else {
+    # Create Counter.
+    "`tFound $credentialsCount Client Secrets, Checking Expiry Dates..."
+    $counter = 0
 
-  foreach ($cred in $credentials) {
-
-    $expiryDate = (Get-Date $cred.endDateTime)
-    $notifyDate = (Get-Date $expiryDate).AddDays(-21)
-
-    if ($dateTime -gt $notifyDate ) {
-      $counter++
+    foreach ($cred in $credentials) {
+      # Get Expiry Date & Notify Date.
+      $expiryDate = (Get-Date $cred.endDateTime)
+      $notifyDate = (Get-Date $expiryDate).AddDays(-21)
+      
+      # Add To Counter if Expiry Date within 3 Weeks.
+      if ($dateTime -gt $notifyDate ) {
+        $counter++
+      }
     }
   }
 
@@ -103,8 +117,7 @@ foreach ($id in $applicationIds) {
   if ($counter -gt 0) {
     Write-Output "`tFound $counter Client Secret Due to Expire Soon, Creating Dynatrace Alert..."
 
-    # Get Credentials.
-    $dynatraceCredentials = Get-AutomationPSCredential -Name $dynatraceCredential
+    $dynatraceCredentials = Get-AutomationPSCredential -Name $dynatraceCredential -ErrorAction Stop
     $apiToken             = $dynatraceCredentials.GetNetworkCredential().Password
 
     # Create Headers.
@@ -126,11 +139,15 @@ foreach ($id in $applicationIds) {
     } | ConvertTo-Json
 
     # POST Data to Dynatrace.
-    Write-Output "`tCreating Alert in Dynatrace, Please Wait..."
-    Write-Output "`n"
-
-    $response = Invoke-RestMethod "https://$dynatraceTenant.live.dynatrace.com/api/v2/events/ingest" -Method 'POST' -Headers $requestHeaders -Body $requestBody
-    $response | ConvertTo-Json
+    try {
+        Write-Output "`tCreating Alert in Dynatrace, Please Wait..."
+        $response = Invoke-RestMethod "https://$dynatraceTenant.live.dynatrace.com/api/v2/events/ingest" -Method 'POST' -Headers $requestHeaders -Body $requestBody
+        $response | ConvertTo-Json
+    }
+    catch {
+        Write-Output "`tUnable To Create Dyanatrace Alert, Exception Below:"
+        Write-Output "`n`t$_"
+    }
   }
   else {
     Write-Output "`tFound 0 Client Secrets That Are Due To Expire Soon."

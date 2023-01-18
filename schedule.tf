@@ -7,7 +7,7 @@ locals {
     dynatracecredential = var.runbook_parameters.dynatracecredential
     entitytype          = var.runbook_parameters.entitytype
     entityname          = var.runbook_parameters.entityname
-    project             = var.runbook_parameters.project
+    project             = upper(var.runbook_parameters.project)
   }
 }
 
