@@ -54,7 +54,7 @@ variable "log_progress" {
 
 variable "runbook_parameters" {
   type = object({
-    applicationids      = string # app ids to check for expiring secrets created as a string rather than list(string) due to a bug.
+    applicationids      = list(string)
     azuretenant         = string
     azurecredential     = string
     dynatracetenant     = string
