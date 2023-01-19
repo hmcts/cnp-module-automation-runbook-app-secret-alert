@@ -2,6 +2,10 @@
 
 This Module will create a PowerShell runbook which checks for App Registration Client Secrets that are expiring within 21 days, if a secret is within 21 days of expiring, the runbook will create a Dynatrace Alert via the [Dynatrace API](https://www.dynatrace.com/support/help/dynatrace-api).
 
+## Example Usage
+
+#### Using New Automation Credentials
+
 ```terraform
 module "app_registration_alert" {
   source = "git::https://github.com/hmcts/cnp-module-automation-runbook-app-secret-alert"
@@ -23,6 +27,32 @@ module "app_registration_alert" {
     password    = azurerm_key_vault_secret.dynatrace_token.value
     username    = "dynatrace"
   }
+
+  runbook_parameters = {
+    applicationids      = ["7ea3fb21-3aca-4186-a6aa-c64b26743b21", "c9d9a8da-7cd7-4873-9786-64568642330f"]
+    azuretenant         = "82c5bbd6-ba5b-4f7f-b70c-a576318b363b"
+    dynatracetenant     = "xyz1234"
+    entitytype          = "AZURE_TENANT"
+    entityname          = "HMCTS-Tenant-Name"
+    project             = "VH"
+  }
+
+  tags = {
+    "environment" = "dev"
+    "repository"  = "cnp-module-automation-runbook-app-secret-alert"
+  }
+}
+```
+
+#### Using Existing Automation Credentials
+
+```terraform
+module "app_registration_alert" {
+  source = "git::https://github.com/hmcts/cnp-module-automation-runbook-app-secret-alert"
+
+  automation_account_name = "automation-account"
+  resource_group_name     = "resource-group"
+  location                = "uk south"
 
   runbook_parameters = {
     applicationids      = ["7ea3fb21-3aca-4186-a6aa-c64b26743b21", "c9d9a8da-7cd7-4873-9786-64568642330f"]
