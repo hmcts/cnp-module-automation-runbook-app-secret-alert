@@ -95,20 +95,20 @@ foreach ($id in $ids) {
     Write-Output "`tFound $credentialsCount Client Secrets, Continuing..."
     Continue
   }
-  else {
-    # Create Counter.
-    "`tFound $credentialsCount Client Secrets, Checking Expiry Dates..."
-    $counter = 0
 
-    foreach ($cred in $credentials) {
-      # Get Expiry Date & Notify Date.
-      $expiryDate = (Get-Date $cred.endDateTime)
-      $notifyDate = (Get-Date $expiryDate).AddDays(-21)
-      
-      # Add To Counter if Expiry Date within 3 Weeks.
-      if ($dateTime -gt $notifyDate ) {
-        $counter++
-      }
+  # Create Counter.
+  "`tFound $credentialsCount Client Secrets, Checking Expiry Dates..."
+  
+  $counter = 0
+
+  foreach ($cred in $credentials) {
+    # Get Expiry Date & Notify Date.
+    $expiryDate = (Get-Date $cred.endDateTime)
+    $notifyDate = (Get-Date $expiryDate).AddDays(-21)
+    
+    # Add To Counter if Expiry Date within 3 Weeks.
+    if ($dateTime -gt $notifyDate ) {
+      $counter++
     }
   }
 
@@ -138,15 +138,23 @@ foreach ($id in $ids) {
       }
     } | ConvertTo-Json
 
-    # POST Data to Dynatrace.
     try {
-        Write-Output "`tCreating Alert in Dynatrace, Please Wait..."
-        $response = Invoke-RestMethod "https://$dynatraceTenant.live.dynatrace.com/api/v2/events/ingest" -Method 'POST' -Headers $requestHeaders -Body $requestBody
+      # POST Data to Dynatrace.
+      Write-Output "`tCreating Alert in Dynatrace, Please Wait..."
+      $response = Invoke-RestMethod "https://$dynatraceTenant.live.dynatrace.com/api/v2/events/ingest" -Method 'POST' -Headers $requestHeaders -Body $requestBody
+
+      # Write Output if Dynatrace Alert Failed.
+      if ($response.reportCount -eq 0) {
+        Write-Output "`tFailed to create alert in Dyantrace, this may be due to a incorrect entity name or entity type."
+        Continue
+      }
+      else {
         $response | ConvertTo-Json
+      }
     }
     catch {
-        Write-Output "`tUnable To Create Dyanatrace Alert, Exception Below:"
-        Write-Output "`n`t$_"
+      Write-Output "`tUnable To Create Dyanatrace Alert, Exception Below:"
+      Write-Output "`n`t$_"
     }
   }
   else {

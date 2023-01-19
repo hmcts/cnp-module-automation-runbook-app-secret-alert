@@ -2,8 +2,8 @@ locals {
   runbook_parameters = {
     applicationids      = join(",", var.runbook_parameters.applicationids)
     azuretenant         = var.runbook_parameters.azuretenant
-    azurecredential     = var.runbook_parameters.azurecredential
-    dynatracetenant     = var.runbook_parameters.dynatracetenant
+    azurecredential     = var.azure_credentials == null ? var.runbook_parameters.azurecredential : azurerm_automation_credential.azure_credentials[0].name
+    dynatracetenant     = var.dynatrace_credentials == null ? var.runbook_parameters.dynatracecredential : azurerm_automation_credential.dynatrace_credentials[0].name
     dynatracecredential = var.runbook_parameters.dynatracecredential
     entitytype          = var.runbook_parameters.entitytype
     entityname          = var.runbook_parameters.entityname

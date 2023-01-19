@@ -56,9 +56,9 @@ variable "runbook_parameters" {
   type = object({
     applicationids      = list(string)
     azuretenant         = string
-    azurecredential     = string
+    azurecredential     = optional(string)
     dynatracetenant     = string
-    dynatracecredential = string
+    dynatracecredential = optional(string)
     entitytype          = string
     entityname          = string
     project             = string
